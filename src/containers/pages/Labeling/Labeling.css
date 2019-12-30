@@ -1,0 +1,41 @@
+.soal-layout, .counter-layout {
+    padding: 1.5rem;
+}
+.card-counter {
+    flex-grow: 0;
+    flex-basis: 0;
+    height: fit-content;
+}
+.choice {
+    margin: 2em;
+    padding: 1rem 3rem;
+    border: .1em solid #000;
+    border-radius: 2em;
+    font-weight: 600;
+}
+#choice-positif {
+    color: #32B643;
+    border-color: #32B643;    
+}
+#choice-positif:hover, #p-selected {
+    color: #fff;
+    border-color: #32B643;
+    background-color: #32B643;
+}
+#choice-negatif {
+    color: #E85600;
+    border-color: #E85600;
+}
+#choice-negatif:hover, #n-selected {
+    color: #fff;
+    border-color: #E85600;
+    background-color: #E85600;
+}
+#choice-netral:hover, #nt-selected {
+    background-color: rgb(102, 102, 102);
+    border-color: rgb(102, 102, 102);
+    color: #fff;
+}
+.btn-submit {
+    width: 12em;
+}

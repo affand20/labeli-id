@@ -1,0 +1,23 @@
+body {
+    background-color: #F5F7FB;
+}
+.card {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.dashboard-card-title {
+    text-align: center;
+    text-decoration: none;
+}
+.dashboard-card:hover {
+    box-shadow: 0 0.25rem 1rem rgba(48,55,66,.45);
+    cursor: pointer;
+    transition: linear all 0.15s;
+    text-decoration: none;    
+}
+.brand, .brand:hover, .brand:visited, .brand:focus, .brand:active {    
+    color : #302ecd!important;
+}
+.brand:hover {
+    text-decoration: none!important;
+}

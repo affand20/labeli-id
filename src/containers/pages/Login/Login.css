@@ -1,0 +1,58 @@
+.btn {
+    width: 100%;
+    border-radius: 7px;
+}
+
+.form-input {
+    border-radius: 7px;
+}
+.form-label {
+    font-size: .7rem;
+    font-weight: 300;
+}
+.card {
+    border: 0;
+    box-shadow: 0 0.25rem 1rem rgba(48,55,66,.15);
+    height: 100%;
+    border-radius: 0.5rem;
+    padding: 20px;    
+}
+.card-title {
+    font-weight: 600;
+}
+.belum-punya-akun {
+    text-align: center;
+    margin-top: 25px;    
+    font-size: 12px;
+}
+.belum-punya-akun a:hover{
+    cursor: pointer;
+}
+.google-button {
+    background: #fff;
+    color: #000;
+    border-radius: 7px;
+    padding: 10px;    
+    box-shadow: 0 0.25rem 1rem rgba(48, 55, 66, .1);
+    margin-bottom: 20px;
+}
+
+.google-button:hover, .google-button:active, .google-button:focus {
+    color: #000;
+    text-decoration: none;
+    box-shadow: 0 0.25rem 1rem rgba(48, 55, 66, .2);
+    transition: all linear 0.1s;
+    /* box-shadow: 0 0.25rem 1rem rgba(75, 72, 214, .15)!important; */
+}
+
+.google-button img {
+    height: 24px;
+    width: 24px;
+    vertical-align: middle;
+}
+
+.google-button span {
+    color: #000;
+    vertical-align: middle;
+    margin: 0 2.5em 0;
+}

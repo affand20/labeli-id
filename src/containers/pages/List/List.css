@@ -1,0 +1,12 @@
+.item-dataset {
+    /* margin-top: .5em;
+    margin-bottom: .5em; */
+    /* padding-top: 1em;
+    padding-bottom: 1em; */
+    padding: 1em;
+    border-radius: .5em;
+}
+.item-dataset:hover {
+    background-color: #f1f1fc;
+    transition: linear all 0.15s;    
+}
