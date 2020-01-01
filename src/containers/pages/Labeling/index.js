@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Navbar from "../Navbar";
 import './Labeling.css'
+import axios from 'axios'
 
 class Labeling extends Component {
 
@@ -8,22 +9,107 @@ class Labeling extends Component {
         super(props)
 
         this.state = {
-            soal : 'Kenapa perlu ada sistem zonasi? Ini jelas-jelas merugikan!',
+            // soal : 'Kenapa perlu ada sistem zonasi? Ini jelas-jelas merugikan!',
             count : 0,
-            label : ''
+            label : null,
+            loading : false,
+            data : {},
+            userId : '213'  // dummy, later will be fetch from firebase auth
         }
         this.handleClick = this.handleClick.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+        this.getData = this.getData.bind(this)
+        this.handleSkipSoal = this.handleSkipSoal.bind(this)
     }
 
     handleClick = (e) => {
+        const choice = e.target.innerHTML.toLowerCase()
+        let label = ''
+        if (choice == 'positif') {
+            label = 1
+        } else if (choice == 'negatif') {
+            label = 2
+        } else if (choice == 'netral') {
+            label = 3
+        }
+
         this.setState({
-            label : e.target.innerHTML.toLowerCase()
+            label : label
         })        
+    }
+
+    handleSubmit = () => {
+        this.setState({
+            loading: true
+        });
+
+        const updateData = this.state.data
+        const userId = this.state.userId
+        const label = this.state.label
+
+        if (updateData.label_1 == null && updateData.pelabel_1 == null) {
+            console.log('masuk label1');
+            updateData.label_1 = label
+            updateData.pelabel_1 = userId
+        } else if (updateData.label_2 == null && updateData.pelabel_2 == null) {
+            console.log('masuk label2');
+            updateData.label_2 = label
+            updateData.pelabel_2 = userId
+        } else if (updateData.label_3 == null && updateData.pelabel_3 == null) {
+            console.log('masuk label3');
+            updateData.label_3 = label
+            updateData.pelabel_3 = userId
+        } else if (updateData.label_4 == null && updateData.pelabel_4 == null) {
+            console.log('masuk label4');
+            updateData.label_4 = label
+            updateData.pelabel_4 = userId
+        }
+
+        console.log(updateData)
+
+        axios({
+            method:'post',
+            url:'http://localhost:8000/labeli/update',
+            data: {
+                data: updateData
+            }
+        }).then((res) => {
+            this.setState({
+                loading: false,
+                label: null,
+                count: this.state.count + 1
+            })
+            this.getData()
+        })
+    }
+    
+    handleSkipSoal = (e) => {
+        e.preventDefault()
+        this.getData()
+    }
+
+    getData = () => {
+        axios({
+            method: 'get',
+            url: 'http://localhost:8000/labeli/dataset',
+            data: {
+                userId: '123'   // dummy userId, later will get from firebase auth
+            }
+        }).then((res) => {
+            console.log(res.data.value[0])
+            this.setState({
+                data: res.data.value[0]
+            })            
+        })
+    }
+
+    componentDidMount() {
+        this.getData()
     }
 
     render() {
 
-        const {soal, count, label} = this.state
+        const {data, count, label, loading} = this.state
 
         return (
             <React.Fragment>                
@@ -31,30 +117,39 @@ class Labeling extends Component {
                     <Navbar />                
                     <div className="columns">
                         <div className="column col-9 soal-layout">                            
-                            <div className="card">                                
+                            <div className="card">
                                 <div className="card-body">
-                                    <h2>{soal}</h2>
+                                    <h2>{data.text}</h2>
+                                    <div className="text-right">
+                                        <a onClick={this.handleSkipSoal}>Lewati soal</a>
+                                    </div>                                    
                                     <br />
                                     <br />
                                     <div className="container">
                                         <div className="columns column-choice">
-                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label=='positif' ? 'p-selected' : 'choice-positif'}>
+                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==1 ? 'p-selected' : 'choice-positif'}>
                                                 Positif
                                             </div>
-                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label=='negatif' ? 'n-selected' : 'choice-negatif'}>
+                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==2 ? 'n-selected' : 'choice-negatif'}>
                                                 Negatif
                                             </div>
-                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label=='netral' ? 'nt-selected' : 'choice-netral'}>
+                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==3 ? 'nt-selected' : 'choice-netral'}>
                                                 Netral
                                             </div>
                                         </div>
                                         {
-                                            label.length > 0 ?
+                                            label != null?
                                             <div>
                                                 <br />
                                                 <br />
-                                                <button className="p-centered btn btn-primary btn-lg column col-3 btn-submit">Labeli</button>                                            
+                                                <button className="p-centered btn btn-primary btn-lg column col-3 btn-submit" onClick={this.handleSubmit}>Labeli</button>                                            
                                             </div>                                            
+                                            :
+                                            ''
+                                        }
+                                        {
+                                            loading ?
+                                            <div className="loading loading-lg"></div>
                                             :
                                             ''
                                         }

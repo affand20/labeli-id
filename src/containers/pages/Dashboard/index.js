@@ -4,6 +4,7 @@ import Logo from './../../../assets/img/logo/logo.svg'
 import {Link} from 'react-router-dom'
 import { uploadDataset } from '../../../store/actions/datasetAction'
 import { connect } from 'react-redux'
+import axios from 'axios'
 
 
 class Dashboard extends Component {
@@ -32,9 +33,29 @@ class Dashboard extends Component {
         this.props.uploadDataset(this.state.file)
     }
 
+    resetState = () => {
+        this.setState({
+            file: null
+        })        
+    }
+
+    // componentDidMount = () => {
+    //     console.log('triggered')
+    //     axios({
+    //         method: 'get',
+    //         url: 'http://localhost:8000/labeli/dilabeli',
+    //         data: {
+    //             ownerId: '123',
+    //             datasetId: 'Wfyo72LAUFnDm04TGEKI'
+    //         }
+    //     }).then((res) => {
+    //         console.log(res.data.value[0].total)
+    //     })
+    // }
+
     render() {
 
-        const { username, isUpload, status, file } = this.state
+        const { username, file } = this.state
         const { isUploadProps, statusProps } = this.props
         console.log('state', this.state)
 
@@ -73,7 +94,7 @@ class Dashboard extends Component {
                             </a>                            
                         </div>
                         <div className="column col-4">                            
-                            <a className="card dashboard-card text-dark" href="#modal-upload-dataset">
+                            <a className="card dashboard-card text-dark" onClick={this.resetState} href="#modal-upload-dataset">
                                 <div className="card-image">
                                     <img src={Logo} className="img-responsive" />
                                 </div>
@@ -86,7 +107,8 @@ class Dashboard extends Component {
                                 <div className="modal-container">
                                     <div className="modal-header">
                                         <a href="#close" className="btn btn-clear float-right" aria-label="Close"></a>
-                                    <div className="modal-title h5">Upload Dataset</div>
+                                        <div className="modal-title h5">Upload Dataset</div>
+                                        <small className="">Pastikan file csv kamu mempunyai row 'text'</small>
                                     </div>
                                     <div className="modal-body">
                                         <div className="content">
@@ -142,8 +164,8 @@ class Dashboard extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return {
-        uploadDataset: (dataset) => dispatch(uploadDataset(dataset))
+    return {        
+        uploadDataset: (dataset) => dispatch(uploadDataset(dataset)),
     }
 }
 
