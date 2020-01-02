@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import Navbar from "../Navbar";
 import './Labeling.css'
 import axios from 'axios'
+import { Redirect, Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 class Labeling extends Component {
 
@@ -44,7 +46,7 @@ class Labeling extends Component {
         });
 
         const updateData = this.state.data
-        const userId = this.state.userId
+        const userId = this.props.auth.uid
         const label = this.state.label
 
         if (updateData.label_1 == null && updateData.pelabel_1 == null) {
@@ -93,7 +95,7 @@ class Labeling extends Component {
             method: 'get',
             url: 'http://localhost:8000/labeli/dataset',
             data: {
-                userId: '123'   // dummy userId, later will get from firebase auth
+                userId: this.props.auth.uid   // dummy userId, later will get from firebase auth
             }
         }).then((res) => {
             console.log(res.data.value[0])
@@ -110,6 +112,11 @@ class Labeling extends Component {
     render() {
 
         const {data, count, label, loading} = this.state
+        const { auth } = this.props
+
+        if (!auth.uid) {
+            return <Redirect to="/login"></Redirect>
+        }
 
         return (
             <React.Fragment>                
@@ -119,41 +126,54 @@ class Labeling extends Component {
                         <div className="column col-9 soal-layout">                            
                             <div className="card">
                                 <div className="card-body">
-                                    <h2>{data.text}</h2>
-                                    <div className="text-right">
-                                        <a onClick={this.handleSkipSoal}>Lewati soal</a>
-                                    </div>                                    
-                                    <br />
-                                    <br />
-                                    <div className="container">
-                                        <div className="columns column-choice">
-                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==1 ? 'p-selected' : 'choice-positif'}>
-                                                Positif
+                                    {
+                                        data?
+                                        <React.Fragment>
+                                            <h3>{data.text}</h3>
+                                            <div className="text-right">
+                                                <a onClick={this.handleSkipSoal} style={{cursor: 'pointer'}}>Lewati soal</a>
+                                            </div>                                    
+                                            <br />                                            
+                                            <div className="container">
+                                                <div className="columns column-choice">
+                                                    <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==1 ? 'p-selected' : 'choice-positif'}>
+                                                        Positif
+                                                    </div>
+                                                    <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==2 ? 'n-selected' : 'choice-negatif'}>
+                                                        Negatif
+                                                    </div>
+                                                    <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==3 ? 'nt-selected' : 'choice-netral'}>
+                                                        Netral
+                                                    </div>
+                                                </div>
+                                                {
+                                                    label != null?
+                                                    <div>
+                                                        <br />
+                                                        <br />
+                                                        <button className="p-centered btn btn-primary btn-lg column col-3 btn-submit" onClick={this.handleSubmit}>Labeli</button>                                            
+                                                    </div>                                            
+                                                    :
+                                                    ''
+                                                }
+                                                {
+                                                    loading ?
+                                                    <div className="loading loading-lg"></div>
+                                                    :
+                                                    ''
+                                                }
                                             </div>
-                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==2 ? 'n-selected' : 'choice-negatif'}>
-                                                Negatif
-                                            </div>
-                                            <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==3 ? 'nt-selected' : 'choice-netral'}>
-                                                Netral
-                                            </div>
-                                        </div>
-                                        {
-                                            label != null?
+                                        </React.Fragment>
+                                        :
+                                        <React.Fragment>
+                                            <h2>Soal buatmu tidak tersedia atau mungkin sudah habis, coba lagi nanti</h2>
                                             <div>
                                                 <br />
                                                 <br />
-                                                <button className="p-centered btn btn-primary btn-lg column col-3 btn-submit" onClick={this.handleSubmit}>Labeli</button>                                            
-                                            </div>                                            
-                                            :
-                                            ''
-                                        }
-                                        {
-                                            loading ?
-                                            <div className="loading loading-lg"></div>
-                                            :
-                                            ''
-                                        }
-                                    </div>
+                                                <Link to="/"><button className="btn btn-lg column col-3">Kembali</button></Link>
+                                            </div>
+                                        </React.Fragment>
+                                    }
                                 </div>                                
                             </div>
                         </div>
@@ -175,4 +195,10 @@ class Labeling extends Component {
     }
 }
 
-export default Labeling
+const mapStateToProps = (state) => {
+    return {
+        auth: state.firebase.auth
+    }
+}
+
+export default connect(mapStateToProps)(Labeling)

@@ -19,7 +19,7 @@ const store = createStore(rootReducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore, firebase })),
     reduxFirestore(firebase),
-    reactReduxFirebase(firebase)
+    reactReduxFirebase(firebase, {attachAuthIsReady:true})
   )
 );
 
@@ -33,21 +33,18 @@ class App extends Component {
   }
 
   render() {
-    return (
-      <Provider store={store}>
-        <Router>        
-          <Switch>
-            <Route path="/login" exact component={Login} />
-            <Route path="/register" exact component={Register} />
-            <Route path="/" exact component={Dashboard} />
-            <Route path="/labeli" exact component={Labeling} />
-            <Route path="/datasetku" exact component={Datasetku} />
-          </Switch>
-        </Router>
-      </Provider>
-      
-      
-      // // <Dashboard />
+        
+
+    return (            
+      <Router>        
+        <Switch>
+          <Route path="/login" exact component={Login} />
+          <Route path="/register" exact component={Register} />
+          <Route path="/" exact component={Dashboard} />
+          <Route path="/labeli" exact component={Labeling} />
+          <Route path="/datasetku" exact component={Datasetku} />
+        </Switch>
+      </Router>
     );
   }  
 }

@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux'
+import { register } from '../../../store/actions/authActions'
 
 class Register extends Component {
 
@@ -25,13 +28,18 @@ class Register extends Component {
     }
 
     handleSubmit = () => {
-        
+        this.props.signUp(this.state)
     }
 
     render() {
         const {nama, email, password, confirm_password} = this.state
         const enable = nama.length > 0 && email.length > 0 && password.length > 0 && confirm_password.length > 0 && password===confirm_password
         const unmatchPassword = password!==confirm_password
+        const {isLoading, auth, authError} = this.props
+
+        if (auth.uid) {
+            return <Redirect to="/"></Redirect>
+        }
 
         return (
             <div className="container">
@@ -42,7 +50,7 @@ class Register extends Component {
                     <div className="column col-md-4 col-sm-12">
                         <div className="card">
                             <div className="card-header">
-                                <div className="card-title h5">Masuk</div>
+                                <div className="card-title h5">Daftar</div>
                                 
                             </div>                                                        
                             <div className="card-body">                                
@@ -68,16 +76,28 @@ class Register extends Component {
                                 </div>
                                 <br />
                                 <button disabled={!enable} onClick={this.handleSubmit} className={`btn btn-primary ${this.state.btnType==='loading' ? 'loading' : ''}`}>Daftar</button>
+                                {
+                                    authError?
+                                    <small className="text-error">{authError}</small>
+                                    :
+                                    null
+                                }
                             </div>
-                            <br />
+                            {/* <br />
                             <div className="divider text-center" data-content="atau"></div>
-                            <br />
+                            <br /> */}
                             <div className="card-footer">
-                                <a href="#" className="google-button text-center">
+                                {/* <a href="#" className="google-button text-center">
                                     <img alt="Google-icons" src="https://img.icons8.com/color/48/000000/google-logo.png"/>
                                     <span>Daftar dengan Google</span>
-                                </a>
+                                </a> */}
                                 <p className="belum-punya-akun">Sudah punya akun? <a href="/login">Masuk disni</a></p>
+                                {
+                                    isLoading ?
+                                    <div className="loading loading-lg"></div>
+                                    :
+                                    null
+                                }    
                             </div>
                         </div>
                     </div>
@@ -90,4 +110,18 @@ class Register extends Component {
     }
 }
 
-export default Register;
+const mapStateToProps = (state) => {
+    return {
+        authError: state.auth.authError,
+        isLoading: state.auth.isLoading,
+        auth: state.firebase.auth
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        signUp: (newUser) => dispatch(register(newUser))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

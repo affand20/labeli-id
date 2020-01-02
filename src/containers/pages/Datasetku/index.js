@@ -5,6 +5,7 @@ import List from '../List'
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
+import { Redirect } from 'react-router-dom'
 
 class Datasetku extends Component {
 
@@ -19,8 +20,12 @@ class Datasetku extends Component {
     render() {
 
         // console.log(this.props)
-        const { datasets } = this.props
+        const { datasets, auth } = this.props
         console.log('datasets', datasets)
+
+        if (!auth.uid) {
+            return <Redirect to="/login"></Redirect>
+        }
 
         return (
             <React.Fragment>
@@ -30,7 +35,7 @@ class Datasetku extends Component {
                         <div className="column col-12 dataset-layout">
                             <div className="card">                                
                                 <div className="card-body">
-                                    <h2>Dataset Saya</h2>
+                                    <h2>Dataset Tersedia</h2>
                                     <br />
                                     {
                                         datasets ?
@@ -51,7 +56,8 @@ class Datasetku extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        datasets: state.firestore.ordered.datasets,        
+        datasets: state.firestore.ordered.datasets,
+        auth: state.firebase.auth
     }
 }
 

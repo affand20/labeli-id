@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import './Login.css'
-import {Link} from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { signInWithEmail } from '../../../store/actions/authActions'
 
 class Login extends Component {
 
@@ -26,13 +28,18 @@ class Login extends Component {
         })                
     }
 
-    handleSubmit = () => {
-        
+    handleSubmit = () => {        
+        this.props.signIn(this.state)
     }
 
-    render() {
+    render() {        
         const {email, password} = this.state
         const enable = email.length > 0 && password.length > 0
+        const {authError, isLoading, auth} = this.props
+
+        if (auth.uid) {
+            return <Redirect to="/"></Redirect>
+        }
 
         return (
             <div className="container">
@@ -60,16 +67,28 @@ class Login extends Component {
                                 </div>
                                 {/* {this.props.page=="register" ? <Input label='Konfirmasi Password' id='konfirm-password'/> : ""}                     */}
                                 <button disabled={!enable} onClick={this.handleSubmit} className={`btn btn-primary ${this.state.btnType==='loading' ? 'loading' : ''}`}>Selanjutnya</button>
+                                {
+                                    authError ?
+                                    <small className="text-error">{authError}</small>
+                                    :
+                                    null
+                                }
                             </div>
-                            <br />
+                            {/* <br />
                             <div className="divider text-center" data-content="atau"></div>
-                            <br />
+                            <br /> */}
                             <div className="card-footer">
-                                <a href="#" className="google-button text-center">
+                                {/* <a href="#" className="google-button text-center">
                                     <img alt="Google-icons" src="https://img.icons8.com/color/48/000000/google-logo.png"/>
                                     <span>Masuk dengan Google</span>
-                                </a>
+                                </a> */}
                                 <p className="belum-punya-akun">Belum punya akun? <Link to="/register">Daftar disni</Link></p>
+                                {
+                                    isLoading ?
+                                    <div className="loading loading-lg"></div>
+                                    :
+                                    null
+                                }                                
                             </div>
                         </div>
                     </div>
@@ -82,4 +101,18 @@ class Login extends Component {
     }
 }
 
-export default Login;
+const mapStateToProps = (state) => {    
+    return {
+        authError: state.auth.authError,
+        isLoading: state.auth.isLoading,
+        auth: state.firebase.auth
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        signIn: (creds) => dispatch(signInWithEmail(creds))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

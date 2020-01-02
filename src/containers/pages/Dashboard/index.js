@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import './Dashboard.css'
 import Logo from './../../../assets/img/logo/logo.svg'
-import {Link} from 'react-router-dom'
-import { uploadDataset } from '../../../store/actions/datasetAction'
+import {Redirect} from 'react-router-dom'
+import { uploadDataset, resetState } from '../../../store/actions/datasetAction'
 import { connect } from 'react-redux'
-import axios from 'axios'
+import { signOut } from '../../../store/actions/authActions'
 
 
 class Dashboard extends Component {
@@ -30,7 +30,17 @@ class Dashboard extends Component {
             isUpload : true,
             status : 'uploading'
         })
-        this.props.uploadDataset(this.state.file)
+        const dataset = {
+            file: this.state.file,
+            uid: this.props.auth.uid,
+            nama: this.props.profile.nama
+        }
+        this.props.uploadDataset(dataset)
+    }    
+
+    signOut = (e) => {
+        e.preventDefault()
+        this.props.signOut()
     }
 
     resetState = () => {
@@ -39,25 +49,15 @@ class Dashboard extends Component {
         })        
     }
 
-    // componentDidMount = () => {
-    //     console.log('triggered')
-    //     axios({
-    //         method: 'get',
-    //         url: 'http://localhost:8000/labeli/dilabeli',
-    //         data: {
-    //             ownerId: '123',
-    //             datasetId: 'Wfyo72LAUFnDm04TGEKI'
-    //         }
-    //     }).then((res) => {
-    //         console.log(res.data.value[0].total)
-    //     })
-    // }
-
     render() {
 
         const { username, file } = this.state
-        const { isUploadProps, statusProps } = this.props
-        console.log('state', this.state)
+        const { isUploadProps, auth, statusProps, profile } = this.props
+        // console.log('auth', this.props)
+
+        if (!auth.uid) {
+            return <Redirect to="/login"></Redirect>
+        }
 
         return (
             <div className="container">                
@@ -65,16 +65,16 @@ class Dashboard extends Component {
                     <div className="hero-body columns">
                         <div className="column col-9">
                             <h1>Selamat datang di <span className="text-bold mr-2 brand">labeli</span></h1>
-                            <p>This is a hero example</p>
+                            {/* <p>This is a hero example</p> */}
                         </div>
                         <div className="column col-3 text-right">    
-                            <figure className="avatar avatar-lg" data-initial="AF" style={{ backgroundColor: '#5755d9' }}></figure>                    
+                            <figure className="avatar avatar-lg" data-initial={profile.inisial} style={{ backgroundColor: '#5755d9' }}></figure>                    
                             <div className="dropdown dropdown-right">                            
                                 <a className="btn text-dark btn-link dropdown-toggle" tabIndex="0">                                
-                                    {username} <i className="icon icon-caret"></i>
+                                    {profile.nama} <i className="icon icon-caret"></i>
                                 </a>                                
                                 <ul className="menu text-left">
-                                    <li className="menu-item"><Link to="/logout">Keluar</Link></li>                                    
+                                    <li className="menu-item"><a onClick={this.signOut} style={{ cursor: 'pointer' }}>Keluar</a></li>                                    
                                 </ul>
                             </div>
                         </div>
@@ -150,7 +150,7 @@ class Dashboard extends Component {
                                     <img src={Logo} className="img-responsive" />
                                 </div>
                                 <div className="card-header">
-                                    <div className="card-title dashboard-card-title h5">Dataset Saya</div>
+                                    <div className="card-title dashboard-card-title h5">Dataset Tersedia</div>
                                 </div>
                             </a>                            
                         </div>
@@ -166,14 +166,18 @@ class Dashboard extends Component {
 const mapDispatchToProps = (dispatch) => {
     return {        
         uploadDataset: (dataset) => dispatch(uploadDataset(dataset)),
+        signOut: () => dispatch(signOut()),
+        resetState: () => dispatch(resetState())
     }
 }
 
 const mapStateToProps = (state) => {
-    console.log('mapStateToProps', state)
+    console.log(state)
     return {
         statusProps: state.dataset.status,
-        isUploadProps: state.dataset.isUpload
+        isUploadProps: state.dataset.isUpload,
+        auth: state.firebase.auth,
+        profile: state.firebase.profile
     }
 }
 

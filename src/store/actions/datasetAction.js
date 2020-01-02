@@ -15,16 +15,19 @@ export const uploadDataset = (dataset) => {
         const firestore = getFirestore();        
         const storage = getFirebase();
 
+        const file = dataset.file        
+
         // upload file ke firebase storage
-        storage.uploadFile('dataset', dataset, 'dataset')            
+        storage.uploadFile('dataset', file, 'dataset')            
             .then(({uploadTaskSnapshot}) => (uploadTaskSnapshot))
             .then(({ref})=> (ref.getDownloadURL()))
             .then((url) => {                
                 // insert data ke firestore
                 return firestore.collection('datasets')
                     .add({
-                        file : dataset.name,
-                        authorId : 12345,
+                        file : file.name,
+                        authorId : dataset.uid,
+                        nama : dataset.nama,
                         url : url,
                         createdAt : new Date()
                     })
@@ -35,7 +38,7 @@ export const uploadDataset = (dataset) => {
                             url: 'http://localhost:8000/dataset',
                             data: {
                                 url: url,
-                                ownerId: '123',
+                                ownerId: dataset.uid,
                                 datasetId: ref.id
                             }
                         }).then((res) => {                            
