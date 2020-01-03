@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './List.css'
 import axios from 'axios'
+import download from 'downloadjs'
 
 class List extends Component {
 
@@ -43,17 +44,10 @@ class List extends Component {
             url: 'http://localhost:8000/dataset/download',            
             params: {
                 datasetId: id
-            }
+            },
+            responseType: 'blob'
         }).then((res) => {
-            console.log('res',res)
-            const result = res.data.value[0]
-            const url = window.URL.createObjectURL(new Blob([result]))            
-            const link = document.createElement('a')
-            console.log('url', url)
-            link.href = url
-            link.setAttribute('download', `${id}-dilabeli-id.csv`)
-            document.body.appendChild(link)
-            link.click()
+            download(new Blob([res.data]), `${id}-dilabeli-id.csv`, 'text/csv')            
         })
     }
 
