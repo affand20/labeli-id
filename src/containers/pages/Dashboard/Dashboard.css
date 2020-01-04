@@ -18,6 +18,25 @@ body {
 .brand, .brand:hover, .brand:visited, .brand:focus, .brand:active {    
     color : #302ecd!important;
 }
+.header-hero {
+    padding-bottom: 2rem;
+}
+.menu-icon {
+    width: 350px;
+    margin-left: .35rem;
+}
 .brand:hover {
     text-decoration: none!important;
+}
+@media screen and (max-width:600px) {
+    .menu-card {
+        /* margin-top: .2em; */
+        margin-bottom: 1em;
+    }
+    .header-hero {
+        padding: 2rem .4rem;
+    }
+    .menu-icon {
+        width: 20rem;
+    }
 }

@@ -8,34 +8,29 @@ const authReducer = (state=initialState, action) => {
         case 'LOGIN_PROGRESS':
             state.isLoading = true
             return state
-        case 'LOGIN_ERROR':
-            console.log('login failed')
+        case 'LOGIN_ERROR':            
             state.isLoading = false
             return {
                 ...state,
                 authError: action.err.message
             }
-        case 'LOGIN_SUCCESS':
-            console.log('login success')
+        case 'LOGIN_SUCCESS':            
             state.isLoading = false
             return {
                 ...state,
                 authError: null
             }
-        case 'SIGNOUT_SUCCESS':
-            console.log('signout sucess')
+        case 'SIGNOUT_SUCCESS':            
             return state
         case 'SIGNUP_PROGRESS':
             state.isLoading = true
             return state
-        case 'SIGNUP_SUCCESS':
-            console.log('signup success')
+        case 'SIGNUP_SUCCESS':            
             return {
                 ...state,
                 authError: null
             }
-        case 'SIGNUP_ERROR':
-            console.log('signup error', action.err.message)
+        case 'SIGNUP_ERROR':            
             return {
                 ...state,
                 authError: action.err.message

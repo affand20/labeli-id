@@ -16,17 +16,13 @@ const datasetReducer = (state=initialState, action) => {
             return state
         case 'UPLOAD_PROGRESS':
             state.status = 'uploading'
-            state.isUpload = true
-            console.log(state)
+            state.isUpload = true            
             return state
-        case 'UPLOAD_DATASET':
-            console.log('Upload Dataset', action.dataset)            
+        case 'UPLOAD_DATASET':            
             state.status = 'success'
-            state.isUpload = false
-            console.log('state',state)
+            state.isUpload = false            
             return state            
-        case 'UPLOAD_DATASET_ERROR':
-            console.log('Upload Dataset Error', action.error)
+        case 'UPLOAD_DATASET_ERROR':            
             state.status = 'failed'
             state.isUpload = false
             return state            

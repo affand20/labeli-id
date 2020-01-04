@@ -1,3 +1,8 @@
 .dataset-layout {
     padding: 1.5rem;
 }
+@media screen and (max-width:600px) {
+    .header-text {
+        font-size: 1.3rem;
+    }
+}

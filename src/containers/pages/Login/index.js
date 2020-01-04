@@ -20,9 +20,7 @@ class Login extends Component {
         
     }
 
-    handleTextChange = (elem) => {
-        // console.log(elem.target.id, elem.target.value);         
-        
+    handleTextChange = (elem) => {                   
         this.setState({
             [elem.target.id] : elem.target.value,            
         })                

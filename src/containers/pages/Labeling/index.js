@@ -14,8 +14,9 @@ class Labeling extends Component {
             // soal : 'Kenapa perlu ada sistem zonasi? Ini jelas-jelas merugikan!',
             count : 0,
             label : null,
-            loading : false,
-            data : {},
+            loading : false,            
+            data : {},            
+            loadSoal: false,
             userId : '213'  // dummy, later will be fetch from firebase auth
         }
         this.handleClick = this.handleClick.bind(this)
@@ -49,29 +50,24 @@ class Labeling extends Component {
         const userId = this.props.auth.uid
         const label = this.state.label
 
-        if (updateData.label_1 == null && updateData.pelabel_1 == null) {
-            console.log('masuk label1');
+        if (updateData.label_1 == null && updateData.pelabel_1 == null) {            
             updateData.label_1 = label
             updateData.pelabel_1 = userId
-        } else if (updateData.label_2 == null && updateData.pelabel_2 == null) {
-            console.log('masuk label2');
+        } else if (updateData.label_2 == null && updateData.pelabel_2 == null) {            
             updateData.label_2 = label
             updateData.pelabel_2 = userId
-        } else if (updateData.label_3 == null && updateData.pelabel_3 == null) {
-            console.log('masuk label3');
+        } else if (updateData.label_3 == null && updateData.pelabel_3 == null) {            
             updateData.label_3 = label
             updateData.pelabel_3 = userId
-        } else if (updateData.label_4 == null && updateData.pelabel_4 == null) {
-            console.log('masuk label4');
+        } else if (updateData.label_4 == null && updateData.pelabel_4 == null) {            
             updateData.label_4 = label
             updateData.pelabel_4 = userId
         }
-
-        console.log(updateData)
+        
 
         axios({
             method:'post',
-            url:'http://localhost:8000/labeli/update',
+            url:'https://labeli.himsiunair.com/labeli/update',
             data: {
                 data: updateData
             }
@@ -87,31 +83,55 @@ class Labeling extends Component {
     
     handleSkipSoal = (e) => {
         e.preventDefault()
+        this.setState({
+            label: null
+        })
         this.getData()
     }
 
     getData = () => {
+        this.setState({
+            loadSoal: true
+        })
         axios({
             method: 'get',
-            url: 'http://localhost:8000/labeli/dataset',
-            data: {
+            url: 'https://labeli.himsiunair.com/labeli/dataset',
+            params: {
                 userId: this.props.auth.uid   // dummy userId, later will get from firebase auth
             }
         }).then((res) => {
             console.log(res.data.value[0])
             this.setState({
-                data: res.data.value[0]
+                data: res.data.value[0],
+                loadSoal: false
             })            
         })
     }
 
     componentDidMount() {
+        // console.log(this.props.auth.uid)
         this.getData()
+        axios({
+            method: 'get',
+            url: 'https://labeli.himsiunair.com/kontribusi',
+            params: {
+                userId: this.props.auth.uid
+            }
+        }).then((res) => {
+            console.log(res.data.value[0])
+            this.setState({
+                count: res.data.value[0].kontribusi
+            })
+        })
     }
+
+    // componentDidUpdate() {
+        
+    // }
 
     render() {
 
-        const {data, count, label, loading} = this.state
+        const {data, count, label, loading, loadSoal} = this.state
         const { auth } = this.props
 
         if (!auth.uid) {
@@ -123,26 +143,31 @@ class Labeling extends Component {
                 <div className="container">
                     <Navbar />                
                     <div className="columns">
-                        <div className="column col-9 soal-layout">                            
+                        <div className="column col-xl-8 col-sm-12 soal-layout">                            
                             <div className="card">
                                 <div className="card-body">
                                     {
                                         data?
                                         <React.Fragment>
-                                            <h3>{data.text}</h3>
+                                            {
+                                                loadSoal ?
+                                                <div className="loading loading-lg"></div>
+                                                :
+                                                <h3 className="soal-text">{data.text}</h3>
+                                            }                                            
                                             <div className="text-right">
                                                 <a onClick={this.handleSkipSoal} style={{cursor: 'pointer'}}>Lewati soal</a>
                                             </div>                                    
                                             <br />                                            
                                             <div className="container">
                                                 <div className="columns column-choice">
-                                                    <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==1 ? 'p-selected' : 'choice-positif'}>
+                                                    <div onClick={this.handleClick} className='column text-center col-xl-3 col-sm-12 c-hand choice' id={label==1 ? 'p-selected' : 'choice-positif'}>
                                                         Positif
                                                     </div>
-                                                    <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==2 ? 'n-selected' : 'choice-negatif'}>
+                                                    <div onClick={this.handleClick} className='column text-center col-xl-3 col-sm-12 c-hand choice' id={label==2 ? 'n-selected' : 'choice-negatif'}>
                                                         Negatif
                                                     </div>
-                                                    <div onClick={this.handleClick} className='column text-center col-3 c-hand choice' id={label==3 ? 'nt-selected' : 'choice-netral'}>
+                                                    <div onClick={this.handleClick} className='column text-center col-xl-3 col-sm-12 c-hand choice' id={label==3 ? 'nt-selected' : 'choice-netral'}>
                                                         Netral
                                                     </div>
                                                 </div>
@@ -151,7 +176,7 @@ class Labeling extends Component {
                                                     <div>
                                                         <br />
                                                         <br />
-                                                        <button className="p-centered btn btn-primary btn-lg column col-3 btn-submit" onClick={this.handleSubmit}>Labeli</button>                                            
+                                                        <button className="p-centered btn btn-primary btn-lg column col-xl-3 col-sm-12 btn-submit" onClick={this.handleSubmit}>Labeli</button>                                            
                                                     </div>                                            
                                                     :
                                                     ''
@@ -177,15 +202,44 @@ class Labeling extends Component {
                                 </div>                                
                             </div>
                         </div>
-                        <div className="column col-3 counter-layout">
-                        <div className="card text-center card-counter">
-                            <div className="card-body h1">
-                                {count}
+                        <div className="column col-xl-4 col-sm-12 counter-layout">
+                            <div className="card text-center card-counter">
+                                <div className="card-body h1">
+                                    {count}
+                                </div>
+                                <div className="card-footer">
+                                    <div className="card-title">Data dilabeli</div>
+                                </div>
                             </div>
-                            <div className="card-footer">
-                                <div className="card-title">Data dilabeli</div>
+                            <br />
+                            <div className="card card-counter">
+                                <div className="card-header">
+                                    <h5>Petunjuk</h5>
+                                </div>
+                                <div className="card-body">
+                                    Pilih label <span className="text-success"><b>Positif</b></span> jika soal mengandung pendapat positif,
+                                    setuju, atau dukungan. <span className="text-error"><b>Negatif</b></span> jika mengandung pendapat 
+                                    negatif, tidak setuju, atau penolakan. Dan <span className="text-dark"><b>Netral</b></span> jika tidak
+                                    sesuai dengan kriteria negatif atau positif, objek bahasan tidak sesuai, atau hanya sekedar info.
+                                    {/* <ol>
+                                        <li>
+                                            Pilih label <span className="text-success">Positif</span> apabila soal mengandung
+                                            pendapat positif, pernyataan setuju, atau dukungan.
+                                        </li>
+                                        <li>
+                                            Pilih label <span className="text-error">Negatif</span> apabila soal mengandung
+                                            pendapat negatif, pernyataan tidak setuju, protes, atau penolakan.
+                                        </li>
+                                        <li>
+                                            Pilih label <span className="text-dark">Netral</span> apabila soal tidak mengandung kriteria
+                                            label negatif maupun positif diatas, diluar konteks objek pembahasan, promosi, atau info.
+                                        </li>
+                                    </ol>                                     */}
+                                </div>
+                                {/* <div className="card-footer">
+                                    <div className="card-title">Data dilabeli</div>
+                                </div> */}
                             </div>
-                        </div>
                             {/* <h2>Ini tempat counter</h2> */}
                         </div>
                     </div>

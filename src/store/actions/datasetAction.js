@@ -35,7 +35,7 @@ export const uploadDataset = (dataset) => {
                         
                         axios({
                             method: 'post',
-                            url: 'http://localhost:8000/dataset',
+                            url: 'https://labeli.himsiunair.com/dataset',
                             data: {
                                 url: url,
                                 ownerId: dataset.uid,

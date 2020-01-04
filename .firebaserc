@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "labeli-id",
+    "labeli-id-deploy": "labeli-id"
+  }
+}

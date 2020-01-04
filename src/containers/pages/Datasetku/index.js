@@ -17,11 +17,8 @@ class Datasetku extends Component {
         }
     }
 
-    render() {
-
-        // console.log(this.props)
-        const { datasets, auth } = this.props
-        console.log('datasets', datasets)
+    render() {        
+        const { datasets, auth } = this.props        
 
         if (!auth.uid) {
             return <Redirect to="/login"></Redirect>
@@ -35,7 +32,7 @@ class Datasetku extends Component {
                         <div className="column col-12 dataset-layout">
                             <div className="card">                                
                                 <div className="card-body">
-                                    <h2>Dataset Tersedia</h2>
+                                    <h2 className="header-text">Dataset Tersedia</h2>
                                     <br />
                                     {
                                         datasets ?

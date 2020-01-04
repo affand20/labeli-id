@@ -8,8 +8,7 @@ class List extends Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            ownerId:  '123',
+        this.state = {            
             count: []
         }
 
@@ -23,9 +22,8 @@ class List extends Component {
         data.forEach((item) => {
             axios({
                 method: 'get',
-                url: 'http://localhost:8000/labeli/dilabeli',
-                data: {
-                    ownerId: this.state.ownerId,
+                url: 'https://labeli.himsiunair.com/labeli/dilabeli',
+                params: {                    
                     datasetId: item.id
                 }
             }).then((res) =>{
@@ -41,7 +39,7 @@ class List extends Component {
         const id = e.target.id
         axios({
             method: 'get',
-            url: 'http://localhost:8000/dataset/download',            
+            url: 'https://labeli.himsiunair.com/dataset/download',            
             params: {
                 datasetId: id
             },

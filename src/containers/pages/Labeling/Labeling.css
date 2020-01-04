@@ -1,13 +1,16 @@
 .soal-layout, .counter-layout {
     padding: 1.5rem;
 }
+.soal-text {
+    text-align: justify;
+}
 .card-counter {
     flex-grow: 0;
     flex-basis: 0;
     height: fit-content;
 }
 .choice {
-    margin: 2em;
+    margin: 1.75em;
     padding: 1rem 3rem;
     border: .1em solid #000;
     border-radius: 2em;
@@ -38,4 +41,13 @@
 }
 .btn-submit {
     width: 12em;
+}
+
+@media screen and (max-width:600px) {
+    .choice {
+        margin: .5em 0;
+    }
+    .soal-text {
+        font-size: 1rem;
+    }
 }
